@@ -11,8 +11,11 @@
 
 .init-cities-card {
     position: relative;
-    border-radius: 5px;
-    border: 2px solid #949494;
+    border-radius: 20px;
+    background-color: #e6e6e61e;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 2px solid #c4c4c4;
     padding: 10px;
     margin: 5px;
     transform: translateX(100px);

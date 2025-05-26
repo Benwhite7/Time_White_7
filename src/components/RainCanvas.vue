@@ -16,6 +16,7 @@ let flakes = [];
 let niebla = [];
 let nubes = [];
 let rayos = [];
+let timeToLightning = 200;
 let lightningTimer = 0;
 let lightningOpacity = 0;
 let isLightning = false;
@@ -78,6 +79,14 @@ function initRain(type) {
       });
     }
   } else if (type.includes("storm")) {
+    for (let i = 0; i < 250; i++) {
+      drops.push({
+        x: Math.random() * el.width,
+        y: Math.random() * el.height,
+        length: Math.random() * 80 + 10,
+        speed: Math.random() * 20 + 2,
+      });
+    }
     for (let i = 0; i < 6; i++) {
       rayos.push({
         x: Math.random() * el.width,
@@ -88,7 +97,7 @@ function initRain(type) {
 
 function stormBackground() {
   const el = canvas.value;
-  ctx.fillStyle = isLightning ? "rgba(255, 255, 255, 0.8)" : "rgba(20,20,30,1)";
+  ctx.fillStyle = isLightning ? "rgba(255, 255, 255, 0.8)" : "rgb(3, 18, 46)";
   ctx.fillRect(0, 0, el.width, el.height);
 }
 
@@ -123,38 +132,7 @@ function drawSnow() {
   ctx.fill();
   moveSnow();
 }
-// function drawSun() {
-//   const el = canvas.value;
-//   const radius = 50;
-//   const gradient = ctx.createRadialGradient(60,60,10,60,60,radius);
-//   gradient.addColorStop(0, '#fff700');
-//   gradient.addColorStop(1, '#fca300');
 
-//   ctx.beginPath();
-//   ctx.arc(60, 60, radius, 0, Math.PI * 2);
-//   ctx.fillStyle = gradient;
-//   ctx.fill();
-
-//   const rayLength = 20;
-//   const rayCount = 12;
-//   const time = Date.now() / 1000;
-
-//   for (let i = 0; i < rayCount; i++) {
-//     const angle = (i * (Math.PI * 2)) / rayCount + time * 0.5;
-
-//     const x1 = 60 + Math.cos(angle) * (radius + 10);
-//     const y1 = 60 + Math.sin(angle) * (radius + 10);
-//     const x2 = 60 + Math.cos(angle) * (radius + 10 + rayLength);
-//     const y2 = 60 + Math.sin(angle) * (radius + 10 + rayLength);
-
-//     ctx.beginPath();
-//     ctx.moveTo(x1, y1);
-//     ctx.lineTo(x2, y2);
-//     ctx.strokeStyle = 'rgba(255, 190, 0, 0.8)';
-//     ctx.lineWidth = 3;
-//     ctx.stroke();
-//   }
-// }
 function drawHeatWaves() {
   const el = canvas.value;
   ctx.clearRect(0, 0, el.width, el.height);
@@ -282,11 +260,21 @@ function moveFog() {
   }
 }
 
+function moveLightning() {
+  const el = canvas.value;
+  for (const r of rayos) {
+    r.x = Math.random() * el.width
+  }
+}
+
 function updateLightning() {
   lightningTimer--;
   if (lightningTimer <= 0) {
     isLightning = Math.random() < 0.1;
     console.log(isLightning);
+    if(timeToLightning <= 0) {
+      timeToLightning = isLightning ? 150 : 0;
+    }
     lightningTimer = isLightning ? 5 : Math.random() * 200 + 100;
   }
 }
@@ -303,8 +291,14 @@ function loop(type) {
   } else if (type.includes("fog")) {
     drawFogs();
   } else if (type.includes("storm")) {
-    stormBackground();
-    drawLightning();
+    if(timeToLightning > 0) {
+      timeToLightning--;
+      stormBackground();
+      drawLightning();
+      if(timeToLightning == 1) moveLightning();
+    } else {
+      drawRain();
+    }
     updateLightning();
   }
   animationFrameId = requestAnimationFrame(() => loop(type));

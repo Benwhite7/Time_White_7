@@ -5,32 +5,16 @@
 
     <section class="interactive-section">
       <div>
-        <input
-          @mouseenter="showHistorial = true"
-          @focus="showHistorial = true"
-          @keyup.enter="getWeather"
-          v-model="city"
-          placeholder="Ingresa una ciudad"
-        />
+        <input @mouseenter="showHistorial = true" @focus="showHistorial = true" @keyup.enter="getWeather"
+          @input="pushSuggestions" v-model="city" placeholder="Ingresa una ciudad" />
 
         <transition name="fade">
-          <article
-            v-if="showHistorial"
-            class="history-searchs-container"
-            ref="searchs"
-          >
-            <div
-              class="history-search-card"
-              v-for="(search, index) in searchs"
-              :key="index"
-            >
+          <article v-if="showHistorial" class="history-searchs-container" ref="searchs">
+            <div class="history-search-card" v-for="(search, index) in searchs" :key="index">
               <option @click="changeInput(search)" :value="search">
                 {{ search }}
               </option>
-              <button
-                class="button_delete_search_card"
-                @click="deleteSearchCard(search)"
-              >
+              <button class="button_delete_search_card" @click="deleteSearchCard(search)">
                 ❌
               </button>
             </div>
@@ -46,17 +30,18 @@
     <p v-if="error" class="error">{{ error }}</p>
     <transition name="fade-city">
       <div class="main-city" v-if="weather">
-        <h2>{{ weather.name }}</h2>
-        <p>{{ getLocalTime(weather) }}</p>
+        <button v-if="verifyFavoriteButton(weather.name)" @click="removeFavoriteCity(weather)">💗</button>
+        <button v-if="!verifyFavoriteButton(weather.name)" @click="addFavoriteCity(weather)">🤍</button>
+        <h2 class="h2-cities">{{ weather.name }}</h2>
+        <p class="h2-cities">{{ getLocalTime(weather) }}</p>
         <p>{{ weather.weather[0].description.toUpperCase() }}</p>
         <p>🌡️ {{ weather.main.temp }} °C</p>
-        <img
-          :src="`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`"
-        />
+        <img :src="`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`" />
       </div>
     </transition>
     <FavoriteCities :cities="favoriteCities" :removeCity="removeFavoriteCity" />
-    <CitiesContainer :data="initCitys" :addCity="addFavoriteCity" />
+    <CitiesContainer :data="initCitys" :addCity="addFavoriteCity" :removeCity="removeFavoriteCity"
+      :favoriteFunc="verifyFavoriteButton" />
   </div>
 </template>
 
@@ -100,6 +85,7 @@ export default {
     let itemsFavorites = localStorage.getItem("saveFavorites");
     if (itemsFavorites) {
       const arrayFavorites = JSON.parse(itemsFavorites);
+      this.saveFavorites = arrayFavorites;
       let stringFavorites = arrayFavorites.join(',');
       const apiKey = import.meta.env.VITE_API_KEY;
       const consult = `${this.URLAPI}group?id=${stringFavorites}&appid=${apiKey}&units=metric&lang=es`;
@@ -114,7 +100,7 @@ export default {
   methods: {
     async getWeather(coords) {
       if (!this.city && !coords) return;
-
+      this.error = null;
       const apiKey = import.meta.env.VITE_API_KEY;
       const URLBODY = this.city
         ? `q=${this.city}`
@@ -160,10 +146,10 @@ export default {
       try {
         const res = await fetch(URL);
         if (!res.ok) throw new Error("No se pueden cargar los favoritos");
-        let { listFav } = await res.json();
-        this.saveFavorites = listFav;
+        let respuesta = await res.json();
+        this.favoriteCities = respuesta.list;
       } catch (error) {
-        this.saveFavorites = null;
+        this.saveFavorites = [];
         this.error = error.message;
       }
     },
@@ -195,7 +181,23 @@ export default {
       localStorage.setItem("historySearchs", historySearchJSON);
     },
 
+    async pushSuggestions() {
+      if (this.city.length < 3) return;
+      const apiKey = import.meta.env.VITE_API_KEY;
+      try {
+        const res = await fetch(
+          `https://api.openweathermap.org/geo/1.0/direct?q=${this.city}&limit=5&appid=${apiKey}`
+        );
+        const response = await res.json();
+        console.log(response);
+      } catch (error) {
+        console.error(error.message);
+      }
+    },
+
     addFavoriteCity(city) {
+      const IHaveCity = this.favoriteCities.some((c) => c.name === city.name);
+      if (IHaveCity) return;
       if (this.favoriteCities.length >= 4) return;
       this.favoriteCities.push(city);
       console.log(city);
@@ -205,10 +207,22 @@ export default {
     },
 
     removeFavoriteCity(city) {
-      let index = this.favoriteCities.indexOf(city);
+      console.log(this.favoriteCities);
+      console.log(city);
+      let index;
+      index = this.favoriteCities.indexOf(city);
+      if (index == -1) index = this.favoriteCities.findIndex((c) => c.name === city.name);
+      if (index == -1) return;
+      let indexId = this.saveFavorites.indexOf(city.id);
       this.favoriteCities.splice(index, 1);
+      this.saveFavorites.splice(indexId, 1);
       let stringFavoritesCities = JSON.stringify(this.saveFavorites);
       localStorage.setItem("saveFavorites", stringFavoritesCities);
+    },
+
+    verifyFavoriteButton(name) {
+      const existCity = this.favoriteCities.some((c) => c.name === name);
+      return existCity;
     },
 
     handleCLickOutside(event) {

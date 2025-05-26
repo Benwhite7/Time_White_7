@@ -9,7 +9,8 @@
         <img
           :src="`https://openweathermap.org/img/wn/${city.weather[0].icon}@2x.png`"
         />
-        <button class="favorite-city-button" @click="addCity(city)">⭐</button>
+        <button v-if="!favoriteFunc(city.name)" class="favorite-city-button" @click="addCity(city)">🤍</button>
+        <button v-if="favoriteFunc(city.name)" class="favorite-city-button" @click="removeCity(city)">💗</button>
       </div>
     </section>
   </transition-group>
@@ -26,7 +27,15 @@ export default {
     addCity: {
       type: Function,
       required: true
-    } 
+    },
+    removeCity: {
+      type: Function,
+      required: true
+    },
+    favoriteFunc: {
+      type: Function,
+      required: true
+    },
 
   },
   methods: {

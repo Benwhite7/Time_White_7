@@ -1,8 +1,8 @@
-<template>
-  <section class="favorite-cities" v-if="cities && cities.length > 0">
+<template>  
+  <section class="favorite-cities" v-if="cities && cities.length > 0">    
     <div class="favorite-city" v-for="(city, index) in cities" :key="index">
-      <h2>{{ city.name }}</h2>
-      <p>{{ getLocalTime(city) }}</p>
+      <h2 class="h2-cities">{{ city.name }}</h2>
+      <p class="h2-cities">{{ getLocalTime(city) }}</p>
       <p>{{ city.weather[0].description.toUpperCase() }}</p>
       <p>🌡️ {{ city.main.temp }} °C</p>
       <img
@@ -28,7 +28,6 @@ export default {
   },
   methods: {
     getLocalTime(c) {
-      console.log(c);
       const TIMEZONE = c.timezone ? c.timezone : c.sys.timezone;
       const localTimeStamp = (c.dt + TIMEZONE) * 1000;
       const localDate = new Date(localTimeStamp);
