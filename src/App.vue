@@ -98,6 +98,8 @@ export default {
       }
     );
     let itemsFavorites = localStorage.getItem("saveFavorites");
+    console.log(itemsFavorites);
+    
     if (itemsFavorites) {
       const arrayFavorites = JSON.parse(itemsFavorites);
       let stringFavorites = arrayFavorites.join(',');
@@ -172,8 +174,8 @@ export default {
       let body = document.querySelector("body");
       if (this.backGroundPage) body.classList.remove(this.backGroundPage);
       const codeBackGround = this.setBackgroundPage(resClima, time);
-      this.backGroundPage = codeBackGround;
-      body.classList.add(codeBackGround);
+      this.backGroundPage = "-bg-rain-big";
+      body.classList.add("-bg-rain-big");
     },
 
     changeInput(valueOne) {
