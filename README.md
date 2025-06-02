@@ -1,5 +1,48 @@
-# Vue 3 + Vite
+# 🌤️ Aplicación del Clima
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Aplicacion interactiva para hacer consultas del clima, brinda datos como temperatura en diversas ciudades.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## 🚀 Características
+
+- Búsqueda de ciudades por nombre (con sugerencias).
+- Visualización del clima actual (temperatura, humedad, viento).
+- Detección automática por geolocalización.
+- Ciudades favoritas guardadas en `localStorage`.
+- Fondos animados dinámicos según el clima (día/noche, lluvia, niebla, etc.).
+- Compatible con dispositivos móviles.
+
+## 🛠️ Tecnologías utilizadas
+
+- [Vue 3](https://vuejs.org/)
+- [Vite](https://vitejs.dev/)
+- [OpenWeatherMap API](https://openweathermap.org/)
+- CSS personalizado + animaciones
+
+## 📦 Instalación
+
+1. Clona este repositorio:
+   git clone https://github.com/Benwhite7/Time_White_7.git
+   cd app-clima
+2. Instala las dependencias:
+   npm install
+3. Agrega tu API Key en un archivo .env:
+   VITE_API_KEY=tu_clave_de_openweathermap 
+4. Inicia el servidor de desarrollo:
+   npm run dev
+
+🔍 Cómo usar
+   Escribe el nombre de una ciudad y presiona Enter o haz clic en "Buscar".
+   Puedes hacer clic en los íconos de corazón para guardar o eliminar favoritos.
+   La interfaz se adapta según el clima y la hora del lugar buscado.   
+
+📁 Estructura del proyecto
+src/assets/              → JSON de ciudades
+src/components/          → Componentes Vue como SearchSection, RainCanvas, etc.
+src/App.vue              → Componente raíz
+src/main.js              → Punto de entrada
+src/styles.css           → Estilos globales
+src/assets/styles/       → Estilos para componentes
+
+📄 Licencia
+Este proyecto está licenciado bajo la MIT License. 
+Desarrollado por Juan Pérez ✨
