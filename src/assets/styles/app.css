@@ -7,7 +7,6 @@ body {
 
 .app {
   text-align: center;
-  padding: 2rem;
   background-color: transparent;
   transition: background-color 1s ease;
   display: flex;
@@ -15,16 +14,11 @@ body {
   align-items: center;
 }
 
-.app h1 {
-  position: relative;
-}
-
 .-bg-sunny-hot {
   background-color: #f8aa44;
   transition: background-color 1s ease-in-out;
   color: #000;
 }
-
 .-bg-sunny-template {
   background-color: #5196fd;
   transition: background-color 1s ease-in-out;
@@ -34,6 +28,14 @@ body {
   background-color: #1a1a1a;
   color: white;
   transition: background-color 1s ease-in-out;
+}
+.bg-twilight-bg-cloudy-sun,
+.bg-twilight-bg-cloudy,
+.bg-twilight-bg-rain,
+.bg-twilight-bg-rain-big,
+.bg-twilight-bg-sunny-template {
+  background: linear-gradient(to top, #2C3E50, #ff8ea9, #FDB147);
+  color: #252525; 
 }
 
 .-bg-cloudy {
@@ -46,7 +48,6 @@ body {
   color: white;
   transition: background-color 1s ease-in-out;
 }
-
 .-bg-cloudy-sun {
   background-color: #53c9ff;
   transition: background-color 1s ease-in-out;
@@ -104,23 +105,32 @@ body {
   background-color: #f0f0f0;
   color: #000;
 }
-
 .bg-night {
   background-color: #1a1a1a;
   transition: background-color 1s ease-in-out;
   color: white;
 }
 
+.main-title {
+  position: relative;
+  font-size: 50px;
+  margin-top: 75px;
+}
+
 .interactive-section {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  width: 400px;
+  align-items: center;
+  width: 300px;
+  gap: 10px;
   z-index: 1;
 }
 
 .interactive-section_button {
   background-color: #38beff;
   height: 60px;
+  width: 28%;
   padding: 16px;
 }
 
@@ -129,25 +139,31 @@ body {
   color: white;
 }
 
-input {
-  padding: 20px;
+.container-input-options {
+  width: 90%;
+  position: relative;
+}
+
+.input-serach-city {
+  padding: 13px;
   border-radius: 8px;
   border: 2px solid rgb(30, 21, 80);
-  margin-right: 0.5rem;
   transition: transform 0.2s ease;
   transition: background-color 0.3s ease;
   transition: color 0.3s ease, font-weight 0.3s ease;
   color: #444;
   background-color: #f9f9f9;
+  width: 90%;
 }
 
-input:focus {
+.input-serach-city:focus {
   outline: none;
   border-color: #069bff;
 }
 
 .history-searchs-container {
-  width: 200px;
+  width: 100%;
+  max-height: 500px;
   margin-top: 1px;
   border: 1px solid gray;
   background-color: #ffffff;
@@ -156,6 +172,7 @@ input:focus {
   border-radius: 5px;
   position: absolute;
   z-index: 1;
+  overflow-y: auto;
 }
 
 .history-search-card {
@@ -174,6 +191,12 @@ input:focus {
   cursor: pointer;
 }
 
+.option-search-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .button_delete_search_card {
   background-color: transparent;
   padding: 0;
@@ -181,7 +204,7 @@ input:focus {
 
 .main-city {
   position: relative;
-  width: 300px;
+  width: 280px;
   background-color: rgb(53, 53, 53);
   color: white;
   border-radius: 20px;
@@ -208,6 +231,10 @@ input:focus {
 
 .main-city button:hover {
   transform: scale(1.1);
+}
+
+.weather-description {
+  margin: 0 auto 10px;
 }
 
 .error {
@@ -241,5 +268,31 @@ input:focus {
 
   to {
     background-position: 0 100px;
+  }
+}
+
+@media (min-width:640px) {
+  .main-city {
+    width: 480px;
+    padding: 25px;
+  }
+  .extra-info-weather {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(200px, 400px));
+  }
+  .data-weather-main-city {
+    font-size: 25px;
+  }
+  .interactive-section {
+    width: 420px;
+  }
+  .input-serach-city {
+    height: 36px;
+    border-radius: 20px;
+    padding: 18px;
+    font-size: 20px;
+  }
+  .history-search-card {
+    font-size: 22px;
   }
 }

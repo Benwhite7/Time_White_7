@@ -10,40 +10,31 @@ const props = defineProps({
 });
 
 const canvas = ref(null);
-let ctx = null;
-let drops = [];
-let flakes = [];
-let niebla = [];
-let nubes = [];
-let rayos = [];
+let CTX = null;
+let el;
+let timerResize;
+let arrayStation = [];
 let timeToLightning = 200;
 let lightningTimer = 0;
 let lightningOpacity = 0;
 let isLightning = false;
 let animationFrameId;
 
-function initRain(type) {
-  const el = canvas.value;
-  ctx = el.getContext("2d");
+function initStations(type) {
   el.width = window.innerWidth;
   el.height = window.innerHeight;
-  nubes = [];
-  drops = [];
-  flakes = [];
-  niebla = [];
-  rayos = [];
+  arrayStation = [];
   if (type.includes("rain") ) {
     let gotasNumber = 100;
     let gotasLength = 20;
     let gotasSpeed = 4;
     if(type.includes('big')) {
-      console.log('Se hace el cambio');
       gotasNumber = 150;
       gotasLength = 80;
       gotasSpeed = 20;
     }
     for (let i = 0; i < gotasNumber; i++) {
-      drops.push({
+      arrayStation.push({
         x: Math.random() * el.width,
         y: Math.random() * el.height,
         length: Math.random() * gotasLength + 10,
@@ -52,7 +43,7 @@ function initRain(type) {
     }
   } else if (type.includes("snow")) {
     for (let i = 0; i < 100; i++) {
-      flakes.push({
+      arrayStation.push({
         x: Math.random() * el.width,
         y: Math.random() * el.height,
         radius: Math.random() * 3 + 2,
@@ -63,7 +54,7 @@ function initRain(type) {
   } else if (type.includes("cloudy")) {
     const cloudsNumber = type.includes("bg-cloudy-sun") ? 10 : 20;
     for (let i = 0; i < cloudsNumber; i++) {  
-      nubes.push({
+      arrayStation.push({
         x: Math.random() * el.width,
         y: Math.random() * el.height,
         speed: Math.random() * 1,
@@ -71,7 +62,7 @@ function initRain(type) {
     }
   } else if (type.includes("fog")) {
     for (let i = 0; i < 25; i++) {
-      niebla.push({
+      arrayStation.push({
         x: Math.random() * el.width,
         y: el.height - 100,
         size: Math.random() * 10,
@@ -80,7 +71,7 @@ function initRain(type) {
     }
   } else if (type.includes("storm")) {
     for (let i = 0; i < 250; i++) {
-      drops.push({
+      arrayStation.push({
         x: Math.random() * el.width,
         y: Math.random() * el.height,
         length: Math.random() * 80 + 10,
@@ -88,7 +79,7 @@ function initRain(type) {
       });
     }
     for (let i = 0; i < 6; i++) {
-      rayos.push({
+      arrayStation.push({
         x: Math.random() * el.width,
       });
     }
@@ -96,127 +87,109 @@ function initRain(type) {
 }
 
 function stormBackground() {
-  const el = canvas.value;
-  ctx.fillStyle = isLightning ? "rgba(255, 255, 255, 0.8)" : "rgb(3, 18, 46)";
-  ctx.fillRect(0, 0, el.width, el.height);
+  CTX.fillStyle = isLightning ? "rgba(255, 255, 255, 0.8)" : "rgb(3, 18, 46)";
+  CTX.fillRect(0, 0, el.width, el.height);
 }
 
 function drawRain() {
-  const el = canvas.value;
-  ctx.clearRect(0, 0, el.width, el.height);
-  ctx.strokeStyle = "rgba(174,194,224,0.5)";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-
-  for (let i = 0; i < drops.length; i++) {
-    const d = drops[i];
-    ctx.moveTo(d.x, d.y);
-    ctx.lineTo(d.x, d.y + d.length);
+  CTX.clearRect(0, 0, el.width, el.height);
+  CTX.strokeStyle = "rgba(174,194,224,0.5)";
+  CTX.lineWidth = 2;
+  CTX.beginPath();
+  for (let i = 0; i < arrayStation.length; i++) {
+    const d = arrayStation[i];
+    CTX.moveTo(d.x, d.y);
+    CTX.lineTo(d.x, d.y + d.length);
   }
-
-  ctx.stroke();
+  CTX.stroke();
   moveRain();
 }
 
 function drawSnow() {
-  const el = canvas.value;
-  ctx.clearRect(0, 0, el.width, el.height);
-  ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-  ctx.beginPath();
-
+  CTX.clearRect(0, 0, el.width, el.height);
+  CTX.fillStyle = "rgba(255, 255, 255, 0.8)";
+  CTX.beginPath();
   for (const flake of flakes) {
-    ctx.moveTo(flake.x, flake.y);
-    ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2, true);
+    CTX.moveTo(flake.x, flake.y);
+    CTX.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2, true);
   }
-
-  ctx.fill();
+  CTX.fill();
   moveSnow();
 }
 
 function drawHeatWaves() {
-  const el = canvas.value;
-  ctx.clearRect(0, 0, el.width, el.height);
-  ctx.strokeStyle = "rgba(255, 162, 51, 0.5)";
-  ctx.lineWidth = 2;
+  CTX.clearRect(0, 0, el.width, el.height);
+  CTX.strokeStyle = "rgba(255, 162, 51, 0.5)";
+  CTX.lineWidth = 2;
 
   const waveCount = 20;
   const time = Date.now() / 1000;
 
   for (let i = 0; i < waveCount; i++) {
     const x = (el.width / waveCount) * i;
-    ctx.beginPath();
-    const yRandom = Math.random() * 2;
-    let randomYInteger = Math.floor(yRandom) + 1;
-
+    CTX.beginPath();
     for (let y = 0; y < el.height; y += 10) {
       const offset = Math.sin(y / 20 + time + i) * 3;
-      ctx.lineTo(x + offset, y);
+      CTX.lineTo(x + offset, y);
     }
-    ctx.stroke();
+    CTX.stroke();
   }
 }
 
 function drawClouds(bg) {
-  const el = canvas.value;
-  ctx.clearRect(0, 0, el.width, el.height);
-  ctx.fillStyle = bg.includes('night') ? "rgb(99,99,99)" : "rgb(230,230,230)";
-  for (let i = 0; i < nubes.length; i++) {
-    const XCloud = nubes[i].x;
-    const YCloud = nubes[i].y;
-    ctx.beginPath();
-    ctx.ellipse(XCloud, YCloud, 65, 50, 0, 0, Math.PI * 2, true);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(XCloud + 50, YCloud + 10, 55, 40, 0, 0, Math.PI * 2, true);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(XCloud - 50, YCloud + 10, 55, 40, 0, 0, Math.PI * 2, true);
-    ctx.fill();
+  CTX.clearRect(0, 0, el.width, el.height);
+  CTX.fillStyle = bg.includes('night') ? "rgb(99,99,99)" : "rgb(230,230,230)";
+  for (let i = 0; i < arrayStation.length; i++) {
+    const XCloud = arrayStation[i].x;
+    const YCloud = arrayStation[i].y;
+    CTX.beginPath();
+    CTX.ellipse(XCloud, YCloud, 65, 50, 0, 0, Math.PI * 2, true);
+    CTX.fill();
+    CTX.beginPath();
+    CTX.ellipse(XCloud + 50, YCloud + 10, 55, 40, 0, 0, Math.PI * 2, true);
+    CTX.fill();
+    CTX.beginPath();
+    CTX.ellipse(XCloud - 50, YCloud + 10, 55, 40, 0, 0, Math.PI * 2, true);
+    CTX.fill();
   }
   moveCloud();
 }
 
 function drawFogs() {
-  const el = canvas.value;
-  ctx.clearRect(0, 0, el.width, el.height);
-
-  for (const p of niebla) {
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(200,200,200,0.7)`;
-    ctx.ellipse(p.x, p.y, 250, 150 + 10 * p.size, 0, 0, Math.PI * 2, true);
-    ctx.fill();
+  CTX.clearRect(0, 0, el.width, el.height);
+  for (const p of arrayStation) {
+    CTX.beginPath();
+    CTX.fillStyle = `rgba(200,200,200,0.7)`;
+    CTX.ellipse(p.x, p.y, 250, 150 + 10 * p.size, 0, 0, Math.PI * 2, true);
+    CTX.fill();
   }
-
   moveFog();
 }
 
 function drawLightning() {
-  const el = canvas.value;
   if (isLightning) {
     lightningOpacity = 1;
   }
-  ctx.strokeStyle = `rgba(250,250,250,${lightningOpacity})`;
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-
-  for (const r of rayos) {
+  CTX.strokeStyle = `rgba(250,250,250,${lightningOpacity})`;
+  CTX.lineWidth = 3;
+  CTX.beginPath();
+  for (const r of arrayStation) {
     let coorX = r.x;
-    ctx.moveTo(coorX, 0);
+    CTX.moveTo(coorX, 0);
     for (let y = 0; y < el.height; y += 30) {
       coorX += (Math.random() - 0.5) * 30;
-      ctx.lineTo(coorX, y);
+      CTX.lineTo(coorX, y);
     }
   }
 
-  ctx.stroke();
+  CTX.stroke();
   if (lightningOpacity <= 0) return (lightningOpacity = 0);
   lightningOpacity -= 0.01;
 }
 
 function moveRain() {
-  const el = canvas.value;
-  for (let i = 0; i < drops.length; i++) {
-    const d = drops[i];
+  for (let i = 0; i < arrayStation.length; i++) {
+    const d = arrayStation[i];
     d.y += d.speed;
     if (d.y > el.height) {
       d.y = 0;
@@ -226,8 +199,7 @@ function moveRain() {
 }
 
 function moveSnow() {
-  const el = canvas.value;
-  for (const flake of flakes) {
+  for (const flake of arrayStation) {
     flake.y += flake.speedY;
     flake.x += flake.speedX;
     if (flake.y > el.height) {
@@ -241,9 +213,8 @@ function moveSnow() {
 }
 
 function moveCloud() {
-  const el = canvas.value;
-  for (let i = 0; i < nubes.length; i++) {
-    const n = nubes[i];
+  for (let i = 0; i < arrayStation.length; i++) {
+    const n = arrayStation[i];
     n.x += n.speed;
     if (n.x - 110 > el.width) {
       n.x = 0;
@@ -253,16 +224,14 @@ function moveCloud() {
 }
 
 function moveFog() {
-  const el = canvas.value;
-  for (const p of niebla) {
+  for (const p of arrayStation) {
     p.x += p.dx;
     if (p.x < 0 || p.x > el.width) p.dx *= -1;
   }
 }
 
 function moveLightning() {
-  const el = canvas.value;
-  for (const r of rayos) {
+  for (const r of arrayStation) {
     r.x = Math.random() * el.width
   }
 }
@@ -271,7 +240,6 @@ function updateLightning() {
   lightningTimer--;
   if (lightningTimer <= 0) {
     isLightning = Math.random() < 0.1;
-    console.log(isLightning);
     if(timeToLightning <= 0) {
       timeToLightning = isLightning ? 150 : 0;
     }
@@ -310,14 +278,20 @@ onUnmounted(() => {
 
 watch(
   () => props.setTime,
-  (newValue, oldValue) => {
+  (newValue) => {
     if (!canvas) return;
     if (animationFrameId) cancelAnimationFrame(animationFrameId);
-    const el = canvas.value;
-    ctx = el.getContext("2d");
-    ctx.clearRect(0, 0, el.width, el.height);
-    initRain(newValue);
+    el = canvas.value;
+    CTX = el.getContext("2d");
+    CTX.clearRect(0, 0, el.width, el.height);
+    initStations(newValue);
     loop(newValue);
+    window.addEventListener('resize', () => {
+      if(timerResize) clearTimeout(timerResize);
+      timerResize = setTimeout(() => {
+        initStations(newValue)
+      }, 500);
+    })
   }
 );
 </script>

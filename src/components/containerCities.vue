@@ -1,21 +1,21 @@
 <template>
-  <transition-group name="slide" tag="div" class="tarjetas">
-    <section class="init-cities" v-if="data && data.length > 0">
-      <div class="init-cities-card" v-for="(city, index) in data" :key="index" :style="{ animationDelay: `${index * 150}ms` }">
+  <TransitionGroup name="slide" tag="div" class="tarjetas">
+      <div class="init-cities-card" v-for="(city, index) in data" :key="city.name" :style="{ animationDelay: `${index * 250}ms` }">
         <h2 class="h2-cities">{{ city.name }}</h2>
-        <h2 class="h2-cities">{{ getLocalTime(city) }}</h2>
+        <h2 class="h2-cities">{{ calculateTime(city) }}</h2>
         <p>{{ city.weather[0].description.toUpperCase() }}</p>
         <p>🌡️ {{ city.main.temp }} °C</p>
         <img
           :src="`https://openweathermap.org/img/wn/${city.weather[0].icon}@2x.png`"
         />
-        <button v-if="!favoriteFunc(city.name)" class="favorite-city-button" @click="addCity(city)">🤍</button>
-        <button v-if="favoriteFunc(city.name)" class="favorite-city-button" @click="removeCity(city)">💗</button>
-      </div>
-    </section>
-  </transition-group>
+        <button class="favorite-city-button" @click="favoriteFunc(city.name) ? removeCity(city) : addCity(city)">
+          {{ favoriteFunc(city.name) ? '💗' : '🤍' }}
+        </button>
+      </div> 
+  </TransitionGroup>
 </template>
 <script>
+import { TransitionGroup } from "vue";
 import "../assets/styles/cities_container.css";
 export default {
   name: "CitiesContainer",
@@ -36,13 +36,9 @@ export default {
       type: Function,
       required: true
     },
-
-  },
-  methods: {
-    getLocalTime(c) {
-      const localTimeStamp = (c.dt + c.sys.timezone) * 1000;
-      const localDate = new Date(localTimeStamp);
-      return localDate.toUTCString().split(' ')[4].slice(0,5);
+    calculateTime:{
+      type: Function,
+      required: true
     }
   }
 };

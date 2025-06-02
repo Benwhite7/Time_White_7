@@ -2,7 +2,7 @@
   <section class="favorite-cities" v-if="cities && cities.length > 0">    
     <div class="favorite-city" v-for="(city, index) in cities" :key="index">
       <h2 class="h2-cities">{{ city.name }}</h2>
-      <p class="h2-cities">{{ getLocalTime(city) }}</p>
+      <p class="h2-cities">{{ calculateTime(city) }}</p>
       <p>{{ city.weather[0].description.toUpperCase() }}</p>
       <p>🌡️ {{ city.main.temp }} °C</p>
       <img
@@ -24,15 +24,11 @@ export default {
     removeCity: {
       type: Function,
       required: true
-    }
-  },
-  methods: {
-    getLocalTime(c) {
-      const TIMEZONE = c.timezone ? c.timezone : c.sys.timezone;
-      const localTimeStamp = (c.dt + TIMEZONE) * 1000;
-      const localDate = new Date(localTimeStamp);
-      return localDate.toUTCString().split(" ")[4].slice(0, 5);
     },
-  },
+    calculateTime:{
+      type: Function,
+      required: true
+    }
+  }
 };
 </script>

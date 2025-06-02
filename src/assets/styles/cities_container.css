@@ -1,10 +1,8 @@
 .tarjetas {
     width: 100%;
-}
-.init-cities {
-    width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    justify-content: center;
     margin-top: 20px;
     transition: transform 0.5s ease;
 }
@@ -19,11 +17,14 @@
     padding: 10px;
     margin: 5px;
     transform: translateX(100px);
+    opacity: 0;
     animation: slideIn 0.5s ease-out forwards;
 }
 
 .h2-cities {
-    font-size: 25px;
+    margin-top: 10px;
+    font-size: 17px;
+    margin: 20px 5px 5px 5px;
 }
 
 .favorite-city-button {
@@ -31,9 +32,14 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 30px;
+    font-size: 14px;
     padding: 0;
     border: 0;
+}
+
+.favorite-city-button:focus {
+    border: none;
+    outline: none;
 }
 
 .favorite-city-button:hover {
@@ -57,4 +63,16 @@
         opacity: 1;
         transform: translateX(0);
     }
+}
+
+@media (min-width:640px) {
+  .tarjetas {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 420px));
+  }
+  .h2-cities {
+    font-size: 25px;
+  }
+  .favorite-city-button {
+    font-size: 30px;
+  }
 }
