@@ -261,6 +261,18 @@ body {
   transform: translateY(-20px);
 }
 
+.time-footer {
+  background-color: #0d214d;
+  color: #ffffff;
+  font-size: 1.2rem;
+  margin-top: 100px;
+  position: relative;
+  padding: 1rem;
+  text-align: center;
+  width: 100%;
+  z-index: 1;
+}
+
 @keyframes rainFall {
   from {
     background-position: 0 -100px;

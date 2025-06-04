@@ -41,6 +41,10 @@
     <CitiesContainer :data="initCitys" :addCity="addFavoriteCity" :removeCity="removeFavoriteCity"
       :favoriteFunc="verifyFavoriteButton" :calculateTime="getLocalTime"/>
   </div>
+  <footer class="time-footer">
+    <p>🌤️ App del Clima - Desarrollada por Benjamin Melendez© 2025</p>
+    <p>Licencia MIT | <a href="https://github.com/Benwhite7">GitHub</a></p>
+  </footer>
 </template>
 
 <script>
@@ -86,7 +90,7 @@ export default {
     );
     this.getCitiesWeather();
     let itemsFavorites = localStorage.getItem("saveFavorites");
-    if (itemsFavorites.length > 3) {
+    if (itemsFavorites) {
       const arrayFavorites = JSON.parse(itemsFavorites);
       this.saveFavorites = arrayFavorites;
       let stringFavorites = arrayFavorites.join(',');
