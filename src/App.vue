@@ -4,7 +4,11 @@
     <h1 class="main-title">Clima 🌤️</h1>
 
     <SearchSection v-model="city" :askWeather="getWeather" ref="searchRef"/>
-
+    <div class="loading-init" v-if="isLoading">
+      <span></span>
+      <span :style="{ animationDelay: `250ms` }"></span>
+      <span :style="{ animationDelay: `500ms` }"></span>
+    </div>
     <p v-if="error" class="error">{{ error }}</p>
     <transition name="fade-city">
       <div class="main-city" v-if="weather">
@@ -61,18 +65,19 @@ export default {
   data() {
     return {
       initCitys: null,
-      windowLong: false,
       weather: null,
       error: null,
-      searchs: [],
       searchRef: ref(null),
-      remenberSearch: [],
       city: ref(''),
+      searchs: [],
+      remenberSearch: [],
       favoriteCities: [],
       saveFavorites: [],
       URLAPI: "https://api.openweathermap.org/data/2.5/",
       backGroundPage: "bg-default",
       apiKey: import.meta.env.VITE_API_KEY,
+      windowLong: false,
+      isLoading: true,
     };
   },
   mounted() {
@@ -90,7 +95,7 @@ export default {
     );
     this.getCitiesWeather();
     let itemsFavorites = localStorage.getItem("saveFavorites");
-    if (itemsFavorites) {
+    if (itemsFavorites && itemsFavorites.length > 2) {
       const arrayFavorites = JSON.parse(itemsFavorites);
       this.saveFavorites = arrayFavorites;
       let stringFavorites = arrayFavorites.join(',');
@@ -132,8 +137,10 @@ export default {
         if (!res.ok) throw new Error("Ciudad no encontrada");
         let { list } = await res.json();
         list.sort((ca, cb) => ca.name.localeCompare(cb.name));
+        this.isLoading = false;
         this.initCitys = list;
       } catch (error) {
+        this.isLoading = false;
         this.weather = null;
         this.error = error.message;
       }

@@ -21,7 +21,7 @@ Aplicacion interactiva para hacer consultas del clima, brinda datos como tempera
 ## 📦 Instalación
 
 1. Clona este repositorio:
-   git clone https://github.com/Benwhite7/Time_White_7.git
+   git clone https://github.com/Benwhite7/Time_White_7.git →
    cd Time_White_7
 2. Instala las dependencias:
    npm install
@@ -45,4 +45,4 @@ src/assets/styles/       → Estilos para componentes
 
 ## 📄 Licencia
 Este proyecto está licenciado bajo la MIT License. 
-Desarrollado por BenWhite7 ✨
+Desarrollado por BenWhite7 ⚡

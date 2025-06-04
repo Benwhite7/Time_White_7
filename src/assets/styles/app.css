@@ -34,8 +34,8 @@ body {
 .bg-twilight-bg-rain,
 .bg-twilight-bg-rain-big,
 .bg-twilight-bg-sunny-template {
-  background: linear-gradient(to top, #2C3E50, #ff8ea9, #FDB147);
-  color: #252525; 
+  background: linear-gradient(to top, #2c3e50, #ff8ea9, #fdb147);
+  color: #252525;
 }
 
 .-bg-cloudy {
@@ -261,6 +261,22 @@ body {
   transform: translateY(-20px);
 }
 
+.loading-init {
+  display: flex;
+  gap: 10px;
+  height: 2rem;
+  margin: 100px;
+}
+
+.loading-init span {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #157297;
+  animation: loadingPoint 2s infinite;
+}
+
 .time-footer {
   background-color: #0d214d;
   color: #ffffff;
@@ -273,17 +289,17 @@ body {
   z-index: 1;
 }
 
-@keyframes rainFall {
-  from {
-    background-position: 0 -100px;
+@keyframes loadingPoint {
+  50% {
+    transform: translateY(50px);
   }
 
-  to {
-    background-position: 0 100px;
+  100% {
+    transform: translateY(0px);
   }
 }
 
-@media (min-width:640px) {
+@media (min-width: 640px) {
   .main-city {
     width: 480px;
     padding: 25px;
